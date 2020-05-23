@@ -28,7 +28,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 ```  
-**2. Map Fonction:**  
+**2. Map Function:**  
     LongWritable, Text and IntWritable are a varible at mapreduce. Text is used for String, Intwritable is used for Int, Longwritable is used for Long and Doublewritable is used for Double variables.  
     `Mapper<LongWritable, Text, Text, IntWritable>` This line say us the function's inputs are LongWritable and Text. function's outputs will be Text and IntWritable.  
     `public void map(LongWritable key, Text value, Context context)` This line say us input's will be context. It contains 2 variable. One of them key(LongWritable) the others is value(Text). The value (Text) will our dataset (Hotel_reviews.csv). We doest have any key for input.  
@@ -41,7 +41,7 @@ public class sumOfReviews {
    public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
       private final static IntWritable one = new IntWritable(1);
 
-      public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {    //rterger
+      public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 
          String words[] = value.toString().split("\n"); 
          for(String word: words )
@@ -51,8 +51,14 @@ public class sumOfReviews {
       }
    }
 ```  
-   public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
 
+**3. Reduce Function:**  
+`Reducer<Text, IntWritable, Text, IntWritable>` This function takes a context which containts Text and Intwritable (We create thats at map function. like (satir,1)). This function's output also Text and Intwiritable but output will be just one line like (satir, 515000).  `public void reduce(Text key, Iterable<IntWritable> values` This also say us what input will be. Iterable<IntWritable> is used to use foreach function. it isn't very important.  
+  Then, there is the normal java functions. But there is a important thing which is reduce functions jop: reduce functions take a same key and we sum the keys's value. İf you ask so we cant see any function to take same key? The answer is: The jop is done by reduce function. We think it is natural iteration. and reduce function will iterate for each unique key. in this example we just one key(satir) so this reduce function just iterate one time.  
+  If we have 2 key (key1: cat, key2: dog). The reduce function iterates 2 times. Fist time, it finds context which key is cat. And we use thats values. When keys of cat finish, first iterate also finish and the second one starts. The second one also is like first one.
+
+```
+   public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
       public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
 
          int sum = 0;
@@ -62,7 +68,9 @@ public class sumOfReviews {
          context.write(key, new IntWritable(sum));
       }
    }
-
+```  
+**4.**
+```  
    public static void main(String[] args) throws Exception {
 
       Configuration conf = new Configuration();
