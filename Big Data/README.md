@@ -14,3 +14,72 @@ Functions:
   4. The months that most reviews  and least reviews are made through the years 
   5. Standart deviation of all scores 
   
+# About Code:
+**1. Import required library**
+
+```
+import java.io.IOException;
+import java.util.*;
+
+import org.apache.hadoop.conf.*;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+```  
+**2. Map Fonction:**  
+    LongWritable, Text and IntWritable are a varible at mapreduce. Text is used for String, Intwritable is used for Int, Longwritable is used for Long and Doublewritable is used for Double variables.  
+    `Mapper<LongWritable, Text, Text, IntWritable>` This line say us the function's inputs are LongWritable and Text. function's outputs will be Text and IntWritable.  
+    `public void map(LongWritable key, Text value, Context context)` This line say us input's will be context. It contains 2 variable. One of them key(LongWritable) the others is value(Text). The value (Text) will our dataset (Hotel_reviews.csv). We doest have any key for input.  
+    Then we write out function with normal java. Firstly take input and split it line by line. Then put it a String. Then we read each strings line. When take string line we create a context which key is "Satir" and value is 1(int).  
+    In this code we calculate how many line is there. So tehre isn't important for us what string contains. We just calculate how many line are there. So we create a context for each line and the context contains: (satir, 1). The map partition is finished.
+    
+```
+public class sumOfReviews {
+
+   public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
+      private final static IntWritable one = new IntWritable(1);
+
+      public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {    //rterger
+
+         String words[] = value.toString().split("\n"); 
+         for(String word: words )
+         {
+            context.write(new Text("Satir"), one);
+         }
+      }
+   }
+```  
+   public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
+
+      public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+
+         int sum = 0;
+         for (IntWritable val : values) {
+            sum += val.get();
+         }
+         context.write(key, new IntWritable(sum));
+      }
+   }
+
+   public static void main(String[] args) throws Exception {
+
+      Configuration conf = new Configuration();
+      @SuppressWarnings("deprecation")
+      Job job = new Job(conf, "sumOfReviews");
+
+      job.setJarByClass(sumOfReviews.class);
+
+      job.setMapperClass(Map.class);
+      job.setReducerClass(Reduce.class);
+
+      job.setOutputKeyClass(Text.class);
+      job.setOutputValueClass(IntWritable.class);
+
+      FileInputFormat.addInputPath(job, new Path(args[0]));
+      FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+      job.waitForCompletion(true);
+   }
+ }
