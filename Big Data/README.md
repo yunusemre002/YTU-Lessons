@@ -1,9 +1,6 @@
-# Big Data Mapreduce applications. 
+# Big Data Mapreduce applications.  
 
-In our project we will use “515K Hotel Reviews Data in Europe” provided by a user who took time to scrape the data from Booking.com. 
-This dataset contains 515,000 customer reviews and scoring of 1493 luxury hotels across Europe. Meanwhile, the geographical 
-location of hotels are also provided for further analysis. The csv file contains 17 fields. It contains Hotel address, 
-Reviews and Reviewers Scores and many other fields. We will apply 5 fonction on dataset. 
+&nbsp;&nbsp;In our project we will use “515K Hotel Reviews Data in Europe” provided by a user who took time to scrape the data from Booking.com. This dataset contains 515,000 customer reviews and scoring of 1493 luxury hotels across Europe. Meanwhile, the geographical location of hotels are also provided for further analysis. The csv file contains 17 fields. It contains Hotel address, Reviews and Reviewers Scores and many other fields. We will apply 5 fonction on dataset. 
 
 Link for dataset: https://www.kaggle.com/jiashenliu/515k-hotel-reviews-data-in-europe
 
@@ -29,11 +26,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 ```  
 **2. Write Map Function**  
-    LongWritable, Text and IntWritable are a varible at mapreduce. Text is used for String, Intwritable is used for Int, Longwritable is used for Long and Doublewritable is used for Double variables.  
-    `Mapper<LongWritable, Text, Text, IntWritable>` This line say us the function's inputs are LongWritable and Text. function's outputs will be Text and IntWritable.  
-    `public void map(LongWritable key, Text value, Context context)` This line say us input's will be context. It contains 2 variable. One of them key(LongWritable) the others is value(Text). The value (Text) will our dataset (Hotel_reviews.csv). We doest have any key for input.  
-    Then we write out function with normal java. Firstly take input and split it line by line. Then put it a String. Then we read each strings line. When take string line we create a context which key is "Satir" and value is 1(int).  
-    In this code we calculate how many line is there. So tehre isn't important for us what string contains. We just calculate how many line are there. So we create a context for each line and the context contains: (satir, 1). The map partition is finished.
+&nbsp;&nbsp;&nbsp;&nbsp;LongWritable, Text and IntWritable are a varible at mapreduce. Text is used for String, Intwritable is used for Int, Longwritable is used for Long and Doublewritable is used for Double variables.  
+&nbsp;&nbsp;&nbsp;&nbsp;`Mapper<LongWritable, Text, Text, IntWritable>` This line say us the function's inputs are LongWritable and Text. function's outputs will be Text and IntWritable.  
+&nbsp;&nbsp;&nbsp;&nbsp;`public void map(LongWritable key, Text value, Context context)` This line say us input's will be context. It contains 2 variable. One of them key(LongWritable) the others is value(Text). The value (Text) will our dataset (Hotel_reviews.csv). We doest have any key for input.  
+&nbsp;&nbsp;&nbsp;&nbsp;Then we write out function with normal java. Firstly take input and split it line by line. Then put it a String. Then we read each strings line. When take string line we create a context which key is "Satir" and value is 1(int).  
+&nbsp;&nbsp;&nbsp;&nbsp;In this code we calculate how many line is there. So tehre isn't important for us what string contains. We just calculate how many line are there. So we create a context for each line and the context contains: (satir, 1). The map partition is finished.
     
 ```
 public class sumOfReviews {
@@ -53,9 +50,9 @@ public class sumOfReviews {
 ```  
 
 **3. Write Reduce Function**  
-`Reducer<Text, IntWritable, Text, IntWritable>` This function takes a context which containts Text and Intwritable (We create thats at map function. like (satir,1)). This function's output also Text and Intwiritable but output will be just one line like (satir, 515000).  `public void reduce(Text key, Iterable<IntWritable> values` This also say us what input will be. Iterable<IntWritable> is used to use foreach function. it isn't very important.  
-  Then, there is the normal java functions. But there is a important thing which is reduce functions jop: reduce functions take a same key and we sum the keys's value. İf you ask so we cant see any function to take same key? The answer is: The jop is done by reduce function. We think it is natural iteration. and reduce function will iterate for each unique key. in this example we just one key(satir) so this reduce function just iterate one time.  
-  If we have 2 key (key1: cat, key2: dog). The reduce function iterates 2 times. Fist time, it finds context which key is cat. And we use thats values. When keys of cat finish, first iterate also finish and the second one starts. The second one also is like first one.
+&nbsp;&nbsp;&nbsp;&nbsp;`Reducer<Text, IntWritable, Text, IntWritable>` This function takes a context which containts Text and Intwritable (We create thats at map function. like (satir,1)). This function's output also Text and Intwiritable but output will be just one line like (satir, 515000).  `public void reduce(Text key, Iterable<IntWritable> values` This also say us what input will be. Iterable<IntWritable> is used to use foreach function. it isn't very important.  
+&nbsp;&nbsp; &nbsp;&nbsp;Then, there is the normal java functions. But there is a important thing which is reduce functions jop: reduce functions take a same key and we sum the keys's value. İf you ask so we cant see any function to take same key? The answer is: The jop is done by reduce function. We think it is natural iteration. and reduce function will iterate for each unique key. in this example we just one key(satir) so this reduce function just iterate one time.  
+&nbsp;&nbsp;&nbsp;&nbsp;If we have 2 key (key1: cat, key2: dog). The reduce function iterates 2 times. Fist time, it finds context which key is cat. And we use thats values. When keys of cat finish, first iterate also finish and the second one starts. The second one also is like first one.
 
 ```
    public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
